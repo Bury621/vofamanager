@@ -1,7 +1,7 @@
 #ifndef __VOFAMANAGER_H
 #define __VOFAMANAGER_H
 
-#include "main.h"
+#include <stdint.h>
 #include <stdlib.h>
 
 #define VOFA_RX_SIGN_BUFFER_SIZE 64 //标题接收缓冲区大小

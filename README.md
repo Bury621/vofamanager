@@ -34,21 +34,11 @@ Enable:1
 - `vofamanager.h`
 - `vofamanager.c`
 
-当前代码面向 STM32 HAL 工程，依赖 `main.h` 中的 `UART_HandleTypeDef` 和串口句柄定义。
+解析器本身不依赖 STM32 HAL，也不绑定具体串口句柄。`vofamanager.h` 只提供接收状态机；任何串口驱动只要把收到的字节传给 `VOFA_Recevice_Callback()` 就能工作。接入时保证工程能提供 `uint8_t` 定义即可。
 
 ## 三、快速接入
 
-### 1. 配置串口
-
-打开 `vofamanager.h`，把宏改成 VOFA+ 实际连接的串口：
-
-```c
-#define VOFA_UART huart1
-```
-
-如果工程里不是 `huart1`，改成 `huart2`、`huart3` 等实际句柄。
-
-### 2. 创建上下文并初始化
+### 1. 创建上下文并初始化
 
 在应用层定义：
 
@@ -61,27 +51,27 @@ uint8_t vofa_rx_byte;
 
 ```c
 VOFA_Init(&vofa_csx);
-HAL_UART_Receive_IT(&VOFA_UART, &vofa_rx_byte, 1);
+HAL_UART_Receive_IT(&huart1, &vofa_rx_byte, 1);
 ```
 
-### 3. 在 UART 接收完成回调中喂给中间层
+### 2. 在 UART 接收完成回调中喂给中间层
 
-实现 HAL 的接收完成回调：
+下面是 STM32 HAL 工程的一种接入方式；如果使用其它串口驱动，只要在每收到一个字节时调用 `VOFA_Recevice_Callback()`：
 
 ```c
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-    if (huart->Instance == VOFA_UART.Instance)
+    if (huart == &huart1)
     {
         VOFA_Recevice_Callback(&vofa_csx, vofa_rx_byte);
-        HAL_UART_Receive_IT(&VOFA_UART, &vofa_rx_byte, 1);
+        HAL_UART_Receive_IT(&huart1, &vofa_rx_byte, 1);
     }
 }
 ```
 
-这里的关键是：每收到 1 个字节就调用一次 `VOFA_Recevice_Callback()`，然后重新启动单字节中断接收。
+这里的关键是：每收到 1 个字节就调用一次 `VOFA_Recevice_Callback()`，再重新启动下一次接收。
 
-### 4. 实现数据包回调
+### 3. 实现数据包回调
 
 库中的 `VOFA_Get_Package_Callback()` 是弱定义。在应用代码中写同名函数即可覆盖，不需要改库文件：
 
@@ -129,7 +119,6 @@ Kp:2.5\n
 
 | 宏 | 默认值 | 含义 |
 | --- | --- | --- |
-| `VOFA_UART` | `huart1` | VOFA 连接的串口句柄 |
 | `VOFA_RX_SIGN_BUFFER_SIZE` | `64` | 参数名缓冲区大小 |
 | `VOFA_RX_DATA_BUFFER_SIZE` | `64` | 数值缓冲区大小 |
 

@@ -4,6 +4,8 @@
  * @brief 初始化
  * 
  * @param csx 传入的上下文指针
+ * 
+ * @return 无
  */
 void VOFA_Init(vofamanager_csx *csx)
 {
@@ -17,6 +19,8 @@ void VOFA_Init(vofamanager_csx *csx)
  * 
  * @param csx 回调的上下文
  * @param dat 接收到的字节数据
+ * 
+ * @return 无
  */
 void VOFA_Recevice_Callback(vofamanager_csx *csx,uint8_t dat)
 {
@@ -56,7 +60,8 @@ void VOFA_Recevice_Callback(vofamanager_csx *csx,uint8_t dat)
  * @param csx 触发回调的上下文
  * @param sign 收到的标题字符串首指针
  * @param data 收到的浮点型数据
- * @return 无 
+ * 
+ * @return 无
  */
 __attribute__((weak)) void VOFA_Get_Package_Callback(vofamanager_csx *csx,char *sign,float data)
 {

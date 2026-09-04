@@ -56,7 +56,7 @@ void VOFA_Recevice_Callback(vofamanager_csx *csx,uint8_t dat)
  * @param csx 触发回调的上下文
  * @param sign 收到的标题字符串首指针
  * @param data 收到的浮点型数据
- * @return __weak 
+ * @return 无 
  */
 __attribute__((weak)) void VOFA_Get_Package_Callback(vofamanager_csx *csx,char *sign,float data)
 {

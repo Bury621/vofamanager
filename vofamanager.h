@@ -4,11 +4,8 @@
 #include "main.h"
 #include <stdlib.h>
 
-#define VOFA_UART huart1 //配置vofa连接的串口
 #define VOFA_RX_SIGN_BUFFER_SIZE 64 //标题接收缓冲区大小
 #define VOFA_RX_DATA_BUFFER_SIZE 64 //数据接收缓冲区大小
-
-extern UART_HandleTypeDef VOFA_UART;
 
 //接收状态机
 typedef enum{
